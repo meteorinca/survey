@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Survey</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header id="survey-header">
+            <h1>Survey Loader</h1>
+            <p>Select your .md file to begin</p>
+            <input type="file" id="fileInput" accept=".md">
+        </header>
+
+        <form id="survey-form" class="hidden"></form>
+
+        <div id="result-container" class="hidden">
+            <h3>Survey Complete</h3>
+            <p>Copy this code for your Python script:</p>
+            <textarea id="output-code" readonly></textarea>
+            <button onclick="location.reload()">Start Over</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
