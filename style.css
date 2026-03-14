@@ -1,67 +1,83 @@
 :root {
-    --bg: #fdfdfd;
-    --text: #1d1d1f;
-    --accent: #0071e3;
-    --border: #d2d2d7;
+    --primary: #2d3436;
+    --accent: #0984e3;
+    --bg: #f9f9f9;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--bg);
-    color: var(--text);
+    color: var(--primary);
+    line-height: 1.6;
     display: flex;
     justify-content: center;
-    padding: 40px 20px;
-    line-height: 1.5;
+    padding: 20px;
 }
 
 .container {
-    max-width: 600px;
+    max-width: 500px;
     width: 100%;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-.hidden { display: none; }
+h1 { font-size: 1.5rem; margin-bottom: 10px; }
+h3 { font-size: 1rem; font-weight: 400; color: #636e72; margin-bottom: 30px; }
 
-h1 { font-size: 2rem; font-weight: 600; margin-bottom: 0.5rem; }
+.question { margin-bottom: 25px; }
+.question p { margin-bottom: 10px; font-weight: 500; }
 
-.question-block {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.question-text { font-weight: 500; margin-bottom: 1rem; display: block; }
-
-.options-group {
+.options {
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }
 
-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.options label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
+    transition: 0.2s;
 }
 
-button, input[type="file"] {
+input[type="radio"] { display: none; }
+
+input[type="radio"]:checked + span {
+    color: white;
+}
+
+label:has(input[type="radio"]:checked) {
     background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
     color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 8px;
+    font-size: 1rem;
     cursor: pointer;
     margin-top: 20px;
 }
 
 textarea {
     width: 100%;
-    height: 100px;
-    margin: 1rem 0;
+    height: 120px;
+    margin-top: 15px;
     padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dfe6e9;
     font-family: monospace;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: #f5f5f7;
+    font-size: 0.8rem;
+    background: #f1f2f6;
 }
+
+.hidden { display: none; }

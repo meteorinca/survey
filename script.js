@@ -1,66 +1,59 @@
-const fileInput = document.getElementById('fileInput');
-const form = document.getElementById('survey-form');
-const header = document.getElementById('survey-header');
-const resultContainer = document.getElementById('result-container');
-const outputCode = document.getElementById('output-code');
-
-fileInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function(event) {
-        parseAndBuild(event.target.result);
-    };
-    reader.readAsText(file);
-});
-
-function parseAndBuild(content) {
-    const lines = content.split('\n').filter(line => line.trim() !== '');
-    
-    // Parse Metadata
-    const title = lines[0].replace('Survey Title:', '').trim();
-    const options = lines[1].replace('Survey Questions:', '').trim().split(' ');
-    const questions = lines.slice(3); // Skip Title, Questions, and Format lines
-
-    header.innerHTML = `<h1>${title}</h1>`;
-    form.classList.remove('hidden');
-
-    questions.forEach((q, qIdx) => {
-        const qDiv = document.createElement('div');
-        qDiv.className = 'question-block';
+async function loadSurvey() {
+    try {
+        const response = await fetch('survey1.md');
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.trim() !== '');
         
-        let html = `<span class="question-text">${q}</span><div class="options-group">`;
-        options.forEach(opt => {
-            html += `
-                <label>
-                    <input type="radio" name="q${qIdx}" value="${opt}" required>
-                    ${opt}
-                </label>`;
-        });
-        html += `</div>`;
-        qDiv.innerHTML = html;
-        form.appendChild(qDiv);
-    });
+        const container = document.getElementById('survey-content');
+        let html = '';
 
-    const btn = document.createElement('button');
-    btn.textContent = "Submit Results";
-    form.appendChild(btn);
+        lines.forEach((line, index) => {
+            if (line.startsWith('# ')) {
+                html += `<h1>${line.replace('# ', '')}</h1>`;
+            } else if (line.startsWith('### ')) {
+                html += `<h3>${line.replace('### ', '')}</h3>`;
+            } else {
+                html += `
+                <div class="question" data-q="${line.trim()}">
+                    <p>${line.trim()}</p>
+                    <div class="options">
+                        <label><input type="radio" name="q${index}" value="H"> <span>High</span></label>
+                        <label><input type="radio" name="q${index}" value="M"> <span>Med</span></label>
+                        <label><input type="radio" name="q${index}" value="L"> <span>Low</span></label>
+                    </div>
+                </div>`;
+            }
+        });
+
+        container.innerHTML = html;
+        document.getElementById('submit-btn').style.display = 'block';
+    } catch (e) {
+        console.error("Error loading survey1.md", e);
+    }
 }
 
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
+document.getElementById('submit-btn').onclick = () => {
     const results = {};
-    
-    for (let [key, value] of formData.entries()) {
-        results[key] = value;
-    }
+    document.querySelectorAll('.question').forEach(q => {
+        const label = q.getAttribute('data-q');
+        const selected = q.querySelector('input:checked');
+        results[label] = selected ? selected.value : null;
+    });
 
-    // Convert object to string, then Base64 encode it
-    const jsonStr = JSON.stringify(results);
-    const encoded = btoa(jsonStr);
+    // Compression: Convert JSON to Base64
+    const jsonString = JSON.stringify(results);
+    const compressed = btoa(jsonString); 
 
-    form.classList.add('hidden');
-    resultContainer.classList.remove('hidden');
-    outputCode.value = encoded;
-});
+    document.getElementById('survey-container').classList.add('hidden');
+    document.getElementById('result-container').classList.remove('hidden');
+    document.getElementById('output-code').value = compressed;
+};
+
+function copyToClipboard() {
+    const copyText = document.getElementById("output-code");
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+    alert("Code copied! Text this to me.");
+}
+
+loadSurvey();
